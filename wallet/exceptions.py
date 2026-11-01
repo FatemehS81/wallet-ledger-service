@@ -25,6 +25,10 @@ class AmountLimitExceeded(WalletError):
     """The amount is above ``MAX_TRANSACTION_AMOUNT``."""
 
 
+class InvalidIdempotencyKey(WalletError):
+    """The Idempotency-Key header is missing or not a valid UUID."""
+
+
 class InsufficientFunds(WalletError):
     """A debit is larger than the current balance."""
 
