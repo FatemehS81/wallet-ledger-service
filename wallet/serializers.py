@@ -31,3 +31,9 @@ class LedgerEntrySerializer(serializers.ModelSerializer):
 class BalanceSerializer(serializers.Serializer):
     balance = serializers.IntegerField()
     updated_at = serializers.DateTimeField()
+
+
+class PaginatedLedgerEntrySerializer(serializers.Serializer):
+    next = serializers.URLField(allow_null=True)
+    previous = serializers.URLField(allow_null=True)
+    results = LedgerEntrySerializer(many=True)
