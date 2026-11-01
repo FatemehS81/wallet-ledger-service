@@ -1,0 +1,20 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["**/migrations/*", "**/*.md"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py"]
+testpaths = ["wallet/tests"]
+addopts = "-ra --cov=accounts --cov=wallet --cov=core --cov-report=term-missing --cov-fail-under=90"
+
+[tool.coverage.run]
+source = ["accounts", "wallet", "core"]
+omit = ["*/tests/*", "*/migrations/*"]
+
+[tool.coverage.report]
+show_missing = true

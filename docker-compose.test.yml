@@ -1,0 +1,37 @@
+name: wallet-test
+
+services:
+  web:
+    build:
+      context: .
+      args:
+        REQUIREMENTS: requirements/dev.txt
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.test
+      SECRET_KEY: test-insecure-secret-key
+      DB_NAME: ${DB_NAME:-wallet_test}
+      DB_USER: ${DB_USER:-wallet}
+      DB_PASSWORD: ${DB_PASSWORD:-wallet}
+      DB_HOST: db
+      DB_PORT: "5432"
+      COVERAGE_FILE: /tmp/.coverage
+      PYTEST_ADDOPTS: -p no:cacheprovider
+    volumes:
+      - .:/app
+    command: pytest
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-wallet_test}
+      POSTGRES_USER: ${DB_USER:-wallet}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-wallet}
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-wallet} -d ${DB_NAME:-wallet_test}"]
+      interval: 3s
+      timeout: 5s
+      retries: 20

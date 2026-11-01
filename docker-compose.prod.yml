@@ -1,0 +1,33 @@
+name: wallet-prod
+
+services:
+  web:
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+    env_file:
+      - .env.prod
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    command: >
+      gunicorn config.wsgi:application
+      --bind 0.0.0.0:8000
+      --workers 3
+      --access-logfile -
+      --error-logfile -
+
+  db:
+    image: postgres:16
+    env_file:
+      - .env.prod
+    volumes:
+      - wallet-prod-db:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  wallet-prod-db:
