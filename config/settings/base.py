@@ -156,6 +156,25 @@ MAX_WALLET_BALANCE = env_int("MAX_WALLET_BALANCE", 10**15)
 
 SWAGGER_ENABLED = env_bool("SWAGGER_ENABLED", False)
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Wallet & Ledger Service API",
+    "DESCRIPTION": (
+        "A small wallet service. Each user owns one wallet and can credit or "
+        "debit it.\n\n"
+        "Idempotency contract: every credit and debit requires an "
+        "`Idempotency-Key` header containing a client-generated UUID. Retrying "
+        "the same operation with the same key and the same type and amount "
+        "replays the original response (200) without creating a second ledger "
+        "entry. Reusing a key with a different type or amount returns 409 "
+        "`idempotency_conflict`.\n\n"
+        "Error envelope: every error response has the shape "
+        '`{"error": {"code": ..., "message": ..., "details": ...}}`.'
+    ),
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {"persistAuthorization": True},
+}
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,

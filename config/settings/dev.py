@@ -6,6 +6,7 @@ from datetime import timedelta
 from .base import *  # noqa: F403 - settings modules intentionally star-import the base
 
 DEBUG = True
+SWAGGER_ENABLED = True
 SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"] = timedelta(hours=12)  # noqa: F405
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-insecure-secret-key")
 ALLOWED_HOSTS = ["*"]
