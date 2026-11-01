@@ -4,6 +4,8 @@ All notable changes to this project are documented here.
 
 ## [1.0.0] - 2026-11-02
 
+First public release.
+
 ### Added
 
 - Django project with separate dev, test and prod settings modules and Docker
