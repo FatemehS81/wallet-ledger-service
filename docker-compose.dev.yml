@@ -1,0 +1,36 @@
+name: wallet-dev
+
+services:
+  web:
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+      SECRET_KEY: ${SECRET_KEY:-dev-insecure-secret-key}
+      DB_NAME: ${DB_NAME:-wallet}
+      DB_USER: ${DB_USER:-wallet}
+      DB_PASSWORD: ${DB_PASSWORD:-wallet}
+      DB_HOST: db
+      DB_PORT: "5432"
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: python manage.py runserver 0.0.0.0:8000
+
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-wallet}
+      POSTGRES_USER: ${DB_USER:-wallet}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-wallet}
+    ports:
+      - "5432:5432"
+    volumes:
+      - wallet-dev-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-wallet} -d ${DB_NAME:-wallet}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  wallet-dev-db:
