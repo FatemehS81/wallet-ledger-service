@@ -7,6 +7,7 @@ debits, concurrent retries and partial writes with one mechanism.
 """
 
 import uuid
+from dataclasses import dataclass
 
 from django.conf import settings
 from django.db import IntegrityError, transaction
@@ -144,3 +145,56 @@ def debit(
 ) -> tuple[LedgerEntry, bool]:
     """Decrease the user's balance. Idempotent per ``idempotency_key``."""
     return apply_entry(user, LedgerEntry.Type.DEBIT, amount, idempotency_key, description)
+
+
+@dataclass(frozen=True)
+class WalletVerification:
+    """Result of recomputing a wallet's balance from its ledger."""
+
+    wallet_id: int
+    consistent: bool
+    expected_balance: int
+    actual_balance: int
+    problems: tuple[str, ...]
+
+
+def verify_wallet(wallet: Wallet) -> WalletVerification:
+    """Recompute the balance from the ledger and check invariants I1, I2 and I4.
+
+    I1: balance == sum(credits) - sum(debits)
+    I2: each balance_after equals the previous balance_after +/- amount
+    I4: the latest entry's balance_after equals the stored wallet balance
+    """
+    problems: list[str] = []
+    running = 0
+    last_balance_after = 0
+    actual_balance = Wallet.objects.only("balance").get(pk=wallet.pk).balance
+
+    entries = LedgerEntry.objects.filter(wallet=wallet).order_by("id")
+    for entry in entries:
+        if entry.type == LedgerEntry.Type.CREDIT:
+            expected = running + entry.amount
+        else:
+            expected = running - entry.amount
+        if entry.balance_after != expected:
+            problems.append(
+                f"entry {entry.pk}: balance_after is {entry.balance_after}, expected {expected}"
+            )
+        running = expected
+        last_balance_after = entry.balance_after
+
+    if actual_balance != running:
+        problems.append(f"wallet balance is {actual_balance}, ledger sum is {running} (I1)")
+    if last_balance_after != actual_balance:
+        problems.append(
+            f"latest entry balance_after is {last_balance_after}, "
+            f"wallet balance is {actual_balance} (I4)"
+        )
+
+    return WalletVerification(
+        wallet_id=wallet.pk,
+        consistent=not problems,
+        expected_balance=running,
+        actual_balance=actual_balance,
+        problems=tuple(problems),
+    )
