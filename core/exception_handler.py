@@ -7,6 +7,7 @@ from rest_framework.exceptions import AuthenticationFailed, NotAuthenticated, Va
 from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
+from accounts.exceptions import UsernameTaken
 from wallet.exceptions import (
     AmountLimitExceeded,
     BalanceLimitExceeded,
@@ -41,6 +42,7 @@ DOMAIN_ERRORS = {
     IdempotencyConflict: ("idempotency_conflict", status.HTTP_409_CONFLICT),
     InsufficientFunds: ("insufficient_funds", status.HTTP_422_UNPROCESSABLE_ENTITY),
     BalanceLimitExceeded: ("balance_limit_exceeded", status.HTTP_422_UNPROCESSABLE_ENTITY),
+    UsernameTaken: ("username_taken", status.HTTP_400_BAD_REQUEST),
 }
 
 

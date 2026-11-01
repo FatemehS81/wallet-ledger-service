@@ -9,7 +9,7 @@ import os
 from .base import *  # noqa: F403 - settings modules intentionally star-import the base
 
 DEBUG = False
-SECRET_KEY = "test-insecure-secret-key"
+SECRET_KEY = "test-insecure-secret-key-change-me-1234567890"
 ALLOWED_HOSTS = ["*"]
 
 DATABASES = {
