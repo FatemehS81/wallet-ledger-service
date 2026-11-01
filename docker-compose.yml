@@ -1,0 +1,13 @@
+# Shared service definition. Always combine with one environment file:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml ...
+services:
+  web:
+    build:
+      context: .
+      args:
+        REQUIREMENTS: requirements/base.txt
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
