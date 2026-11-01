@@ -32,3 +32,12 @@ def fund():
         return services.credit(wallet.user, amount, uuid.uuid4(), "seed")
 
     return _fund
+
+
+@pytest.fixture
+def api_client(user, wallet):
+    from rest_framework.test import APIClient
+
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client
