@@ -23,7 +23,7 @@ services:
       POSTGRES_USER: ${DB_USER:-wallet}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-wallet}
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - wallet-dev-db:/var/lib/postgresql/data
     healthcheck:

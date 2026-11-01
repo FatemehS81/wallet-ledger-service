@@ -10,4 +10,11 @@ select = ["E", "F", "I", "B", "UP"]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["test_*.py"]
 testpaths = ["wallet/tests"]
-addopts = "-ra"
+addopts = "-ra --cov=accounts --cov=wallet --cov=core --cov-report=term-missing --cov-fail-under=90"
+
+[tool.coverage.run]
+source = ["accounts", "wallet", "core"]
+omit = ["*/tests/*", "*/migrations/*"]
+
+[tool.coverage.report]
+show_missing = true

@@ -14,6 +14,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-wallet}
       DB_HOST: db
       DB_PORT: "5432"
+      COVERAGE_FILE: /tmp/.coverage
+      PYTEST_ADDOPTS: -p no:cacheprovider
     volumes:
       - .:/app
     command: pytest
